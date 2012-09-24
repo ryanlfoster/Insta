@@ -4,10 +4,11 @@
 #+
 #+ Description: Payload required. VNC Password, Apple Remote Assistance, MOTD banner, SSH Daemon.
 #+
-#+ Version: 1.0
+#+ Version: 1.1
 #+
 #+ History:
 #+     1.0: Script.
+#+     1.1: AGENT, DAEMON vars to make it a little more dynamic.
 #+
 #+ TODO:
 #+     * Add error checking?
@@ -15,6 +16,8 @@
 ME=$0
 SCRIPT_DIR="$1/Contents/Resources"
 TARGET_DIR="$3"
+AGENT="AppleSharing"
+DAEMON="AppleSharingSSH"
 
 MOTD=$(sudo /usr/bin/defaults read "${SCRIPT_DIR}/config" MOTD)
 VNCPASSWD=$(sudo /usr/bin/defaults read "${SCRIPT_DIR}/config" VNCPASSWD)
@@ -85,27 +88,27 @@ if [ -r "${SCRIPT_DIR}/PAYLOAD" ]; then
 fi
 
 #+ LaunchAgent
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/AppleSharing" Label "com.cg.AppleSharing"
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/AppleSharing" RunAtLoad -bool TRUE
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/AppleSharing" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/ard"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/${AGENT}" Label "com.cg.${AGENT}"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/${AGENT}" RunAtLoad -bool TRUE
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchAgents/${AGENT}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/ard"
 #+ Permissions
-sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchAgents/AppleSharing.plist"
-sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchAgents/AppleSharing.plist"
+sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchAgents/${AGENT}.plist"
+sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchAgents/${AGENT}.plist"
 #+ Load if booted
 if [ -z "${TARGET_DIR}" ] || [ "${TARGET_DIR}" = "" ]; then
- sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchAgents/AppleSharing.plist"
+ sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchAgents/${AGENT}.plist"
 fi
 
 #+ LaunchDaemon
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH" Label "com.cg.AppleSharingSSH"
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH" RunAtLoad -bool TRUE
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH" ProgramArguments -array "/usr/sbin/systemsetup" "-setremotelogin" "on"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" Label "com.cg.${DAEMON}"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" RunAtLoad -bool TRUE
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" ProgramArguments -array "/usr/sbin/systemsetup" "-setremotelogin" "on"
 #+ Permissions
-sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH.plist"
-sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH.plist"
+sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist"
+sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist"
 #+ Load if booted
 if [ -z "${TARGET_DIR}" ] || [ "${TARGET_DIR}" = "" ]; then
- sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchDaemons/AppleSharingSSH.plist"
+ sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist"
 fi
 
 exit 0

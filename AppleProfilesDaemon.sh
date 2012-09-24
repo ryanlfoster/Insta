@@ -4,10 +4,11 @@
 #+
 #+ Description: Payload required. Profiles.
 #+
-#+ Version: 1.0
+#+ Version: 1.1
 #+
 #+ History:
 #+     1.0: Script.
+#+     1.1: DAEMON var to make it a little more dynamic.
 #+
 #+ TODO:
 #+     * Add more error checking?
@@ -16,6 +17,7 @@
 ME=$0
 SCRIPT_DIR="$1/Contents/Resources"
 TARGET_DIR="$3"
+DAEMON="AppleProfiles"
 
 VPN="VPN.mobileconfig"
 WIFI="WIFI.mobileconfig"
@@ -34,17 +36,17 @@ if [ -r "${SCRIPT_DIR}/PAYLOAD" ]; then
 fi
 
 #+ LaunchDaemon
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles" Label "com.cg.AppleProfiles"
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles" RunAtLoad -bool TRUE
-sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/AppleProfilesRunOnceSelfDestruct"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" Label "com.cg.${DAEMON}"
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" RunAtLoad -bool TRUE
+sudo /usr/bin/defaults write "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/AppleProfilesRunOnceSelfDestruct"
 
 #+ Permissions
-sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles.plist"
-sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles.plist" 
+sudo /usr/sbin/chown root:wheel "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist"
+sudo /bin/chmod 644 "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist" 
 
 #+ Load if booted
 if [ -z "${TARGET_DIR}" ] || [ "${TARGET_DIR}" = "" ]; then
- sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchDaemons/AppleProfiles.plist"
+ sudo /bin/launchctl load -w "${TARGET_DIR}/Library/LaunchDaemons/${DAEMON}.plist"
 fi
 
 exit 0
