@@ -1,178 +1,165 @@
 #!/bin/sh
-#* AppleUserTemplate
-#+ chris.gerke@gmail.com
-#+
-#+ Description: Payload required. Default Apple User Template preferences.
-#+
-#+ Version: 1.0
-#+
-#+ History:
-#+     1.0: Script.
-#+
-#+ TODO:
-#+     * Add more error checking?
-#+     * Think about editing existing users?
+# AppleUserTemplate : Payload required. Default Apple User Template preferences.
+# chris.gerke@gmail.com
 
 ME=$0
-SCRIPT_DIR="$1/Contents/Resources"
-TARGET_DIR="$3"
+RES="$1/Contents/Resources"
+ROOT="$3"
 
 HOMEPAGE="http://intranet.rdigest.com"
 
-#+ // fix
-if [ -z "${TARGET_DIR}" ] || [ "${TARGET_DIR}" = "/" ]; then
- TARGET_DIR=""
-fi
+# // fix
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
-TARGET_OS=$(sudo /usr/bin/defaults read "${TARGET_DIR}/System/Library/CoreServices/SystemVersion" ProductVersion)
+TARGET_OS=$(sudo /usr/bin/defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
 
-#+ Loop ${TARGET_DIR}/System/Library/User Template
-for USER_TEMPLATE in `sudo ls ${TARGET_DIR}/System/Library/User\ Template`
+# Loop User Template
+for USER_TEMPLATE in `sudo ls ${ROOT}/System/Library/User\ Template`
 do
- if [ -r "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences" ]; then
-  #+ com.apple.airplay.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.airplay.dock" showInMenuBarIfPresent -bool NO
-  #+ com.apple.dock.plist (basic settings only).
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" autohide -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" launchanim -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" mineffect -string "scale"
-  #+ com.apple.driver.AppleBluetoothMultitouch.trackpad
-  #+ (snow leopard)
+ if [ -r "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences" ]; then
+  # com.apple.airplay.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.airplay.dock" showInMenuBarIfPresent -bool NO
+  # com.apple.dock.plist (basic settings only).
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" autohide -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" launchanim -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.dock" mineffect -string "scale"
+  # com.apple.driver.AppleBluetoothMultitouch.trackpad
+  # (snow leopard)
   sudo /usr/bin/defaults write /Library/Preferences/.GlobalPreferences com.apple.mouse.tapBehavior -int 1
-  #+ (multi touch snow leopard & lion done via ByHost)
-  #sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.trackpad" Clicking -bool YES
-  #+ com.apple.ATS.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.ATS" ATSAutoActivation -string ATSAutoActivationDisable
-  #+ com.apple.Console.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" ApplePersistenceIgnoreState YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" NSQuitAlwaysKeepsWindows -int 0
-  #+ com.apple.CrashReporter.plist (hide from scared end users. maybe switch to basic mode...offers them the choice to delete prefs after second crash).
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.CrashReporter" DialogType Server
-  #+ com.apple.desktopservices.plist (not doing this anymore. Causes weird behaviour with Windows Shares in pre 10.7).
-  #sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.desktopservices" DSDontWriteNetworkStores -bool TRUE
-  #+ com.apple.DiskUtility.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.DiskUtility" advanced-image-options -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.DiskUtility" DUDebugMenuEnabled -bool YES
-  #+ com.apple.finder.plist (possibly redundant if DisableAllAnimations is TRUE, requires testing).
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" AnimateInfoPanes -bool false
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" AnimateWindowZoom -bool false
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ZoomRects -bool false
-  #+ Squeeze some more juice out of older macs? requires testing.
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" DisableAllAnimations -bool true
-  #+ More informative Finder window
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" _FXShowPosixPathInTitle -bool YES
-  #+ A little faster when opening Finder
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" FXDefaultSearchScope -string SCcf
-  #+ Speed up finder info on remote volumes
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded dict" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Comments bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Comments NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:General bool YES" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:General YES" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:MetaData bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:MetaData NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Name bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Name NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Preview bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Preview NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Privileges bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Privileges NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
-  #+ Just some standardisation
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" FXPreferredViewStyle -string Nlsv
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" NewWindowTarget -string PfHm
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" QLEnableTextSelection -bool TRUE
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowHardDrivesOnDesktop -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowMountedServersOnDesktop -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowRemovableMediaOnDesktop -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowPathbar -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowStatusBar -bool YES
-  #+ com.apple.FontBook.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.FontBook" FBValidateFontsBeforeInstalling -bool NO 
-  #+ com.apple.iTunes.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableCheckForUpdates -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableGeniusSidebar -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableGetAlbumArtwork -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePing -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePingSidebar -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePodcasts -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableRadio -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableSharedMusic -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" dontAutomaticallySyncIPods -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" lookForSharedMusic -bool NO
-  #+ com.apple.NetworkBrowser.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.NetworkBrowser" DisableAirDrop -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.NetworkBrowser" BrowseAllInterfaces -bool NO
-  #+ com.apple.print.PrintingPrefs
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.print.PrintingPrefs" "Quit When Finished" -bool true
-  #+ com.apple.Safari.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" ApplePersistenceIgnoreState YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillFromAddressBook -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillMiscellaneousForms -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillPasswords -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" DomainsToNeverSetUp -array "aol.com" "facebook.com" "flickr.com" "google.com" "twitter.com" "vimeo.com" "yahoo.com"
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" IncludeDebugMenu 1
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" LastDisplayedWelcomePageVersionString -string 4.0
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" NewWindowBehaviour 0
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" NSQuitAlwaysKeepsWindows -int 0
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" RestoreSessionAtLaunch -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" WebKitJavaScriptCanOpenWindowsAutomatically -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" ShowStatusBar -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" HomePage "${HOMEPAGE}"
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.internetconfigpriv" WWWHomePage "${HOMEPAGE}"
-  #+ com.apple.SetupAssistant.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" DidSeeCloudSetup -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" GestureMovieSeen none
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" LastSeenCloudProductVersion "10.8"
-  #+ com.apple.systempreferences.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systempreferences" HiddenPreferencePanes -array "com.apple.preference.notifications" "com.apple.preference.startupdisk" "com.apple.prefs.backup" "com.apple.preferences.softwareupdate" "com.apple.preferences.parentalcontrols" "com.apple.preference.internet" "com.apple.preferences.internetaccounts" "com.apple.preferences.icloud" "com.apple.preferences.sharing" "com.apple.preference.desktopscreeneffect" "com.apple.preference.security" "com.apple.preference.engerysaver" "com.NT-Ware.UniFLOWMacClientConfig"
-  #+ com.apple.symbolichotkeys.plist (Disable Dashboard and Mission Control Keys so they are default Fn keys), arrggg! changes every time the OS adds functionality or new keys. Find and disable 10.8 dictation key.
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:32:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:32:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:33:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:33:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:34:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:34:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:35:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:35:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:36:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:36:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:37:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:37:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:52:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:52:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:59:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:59:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:62:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:62:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:63:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:63:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:64:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:64:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:65:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:65:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:73:enabled bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:73:enabled NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
-  #+ com.apple.TimeMachine.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.TimeMachine" DoNotOfferNewDisksForBackup -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.TimeMachine" AutoBackup -bool NO
-  #+ com.apple.universalaccess.plist
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.universalaccess" voiceOverOnOffKey -bool NO
-  #+ .GlobalPreferences
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleKeyboardUIMode -int 2
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleMiniaturizeOnDoubleClick -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleShowAllExtensions -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleShowScrollBars -string "Always" 
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSAutomaticSpellingCorrectionEnabled -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSAutomaticWindowAnimationsEnabled -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSDocumentSaveNewDocumentsToCloud -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSNavPanelExpandedStateForSaveMode -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSQuitAlwaysKeepsWindows -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" PMPrintingExpandedStateForPrint -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" com.apple.swipescrolldirection -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" com.apple.keyboard.fnState -bool YES
+  # (multi touch snow leopard & lion done via ByHost)
+  #sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.trackpad" Clicking -bool YES
+  # com.apple.ATS.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.ATS" ATSAutoActivation -string ATSAutoActivationDisable
+  # com.apple.Console.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" ApplePersistenceIgnoreState YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" NSQuitAlwaysKeepsWindows -int 0
+  # com.apple.CrashReporter.plist (hide from scared end users. maybe switch to basic mode...offers them the choice to delete prefs after second crash).
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.CrashReporter" DialogType Server
+  # com.apple.desktopservices.plist (not doing this anymore. Causes weird behaviour with Windows Shares in pre 10.7).
+  #sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.desktopservices" DSDontWriteNetworkStores -bool TRUE
+  # com.apple.DiskUtility.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.DiskUtility" advanced-image-options -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.DiskUtility" DUDebugMenuEnabled -bool YES
+  # com.apple.finder.plist (possibly redundant if DisableAllAnimations is TRUE, requires testing).
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" AnimateInfoPanes -bool false
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" AnimateWindowZoom -bool false
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ZoomRects -bool false
+  # Squeeze some more juice out of older macs? requires testing.
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" DisableAllAnimations -bool true
+  # More informative Finder window
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" _FXShowPosixPathInTitle -bool YES
+  # A little faster when opening Finder
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" FXDefaultSearchScope -string SCcf
+  # Speed up finder info on remote volumes
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded dict" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Comments bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Comments NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:General bool YES" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:General YES" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:MetaData bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:MetaData NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Name bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Name NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Preview bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Preview NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :FXInfoPanesExpanded:Privileges bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :FXInfoPanesExpanded:Privileges NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder.plist
+  # Just some standardisation
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" FXPreferredViewStyle -string Nlsv
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" NewWindowTarget -string PfHm
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" QLEnableTextSelection -bool TRUE
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowHardDrivesOnDesktop -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowMountedServersOnDesktop -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowRemovableMediaOnDesktop -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowPathbar -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.finder" ShowStatusBar -bool YES
+  # com.apple.FontBook.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.FontBook" FBValidateFontsBeforeInstalling -bool NO 
+  # com.apple.iTunes.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableCheckForUpdates -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableGeniusSidebar -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableGetAlbumArtwork -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePing -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePingSidebar -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disablePodcasts -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableRadio -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" disableSharedMusic -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" dontAutomaticallySyncIPods -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.iTunes" lookForSharedMusic -bool NO
+  # com.apple.NetworkBrowser.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.NetworkBrowser" DisableAirDrop -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.NetworkBrowser" BrowseAllInterfaces -bool NO
+  # com.apple.print.PrintingPrefs
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.print.PrintingPrefs" "Quit When Finished" -bool true
+  # com.apple.Safari.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" ApplePersistenceIgnoreState YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillFromAddressBook -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillMiscellaneousForms -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" AutoFillPasswords -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" DomainsToNeverSetUp -array "aol.com" "facebook.com" "flickr.com" "google.com" "twitter.com" "vimeo.com" "yahoo.com"
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" IncludeDebugMenu 1
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" LastDisplayedWelcomePageVersionString -string 4.0
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" NewWindowBehaviour 0
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" NSQuitAlwaysKeepsWindows -int 0
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" RestoreSessionAtLaunch -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" WebKitJavaScriptCanOpenWindowsAutomatically -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" ShowStatusBar -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Safari" HomePage "${HOMEPAGE}"
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.internetconfigpriv" WWWHomePage "${HOMEPAGE}"
+  # com.apple.SetupAssistant.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" DidSeeCloudSetup -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" GestureMovieSeen none
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.SetupAssistant" LastSeenCloudProductVersion "10.8"
+  # com.apple.systempreferences.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systempreferences" HiddenPreferencePanes -array "com.apple.preference.notifications" "com.apple.preference.startupdisk" "com.apple.prefs.backup" "com.apple.preferences.softwareupdate" "com.apple.preferences.parentalcontrols" "com.apple.preference.internet" "com.apple.preferences.internetaccounts" "com.apple.preferences.icloud" "com.apple.preferences.sharing" "com.apple.preference.desktopscreeneffect" "com.apple.preference.security" "com.apple.preference.engerysaver" "com.NT-Ware.UniFLOWMacClientConfig"
+  # com.apple.symbolichotkeys.plist (Disable Dashboard and Mission Control Keys so they are default Fn keys), arrggg! changes every time the OS adds functionality or new keys. Find and disable 10.8 dictation key.
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:32:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:32:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:33:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:33:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:34:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:34:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:35:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:35:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:36:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:36:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:37:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:37:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:52:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:52:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:59:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:59:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:62:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:62:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:63:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:63:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:64:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:64:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:65:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:65:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:73:enabled bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :AppleSymbolicHotKeys:73:enabled NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.apple.symbolichotkeys.plist
+  # com.apple.TimeMachine.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.TimeMachine" DoNotOfferNewDisksForBackup -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.TimeMachine" AutoBackup -bool NO
+  # com.apple.universalaccess.plist
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.universalaccess" voiceOverOnOffKey -bool NO
+  # .GlobalPreferences
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleKeyboardUIMode -int 2
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleMiniaturizeOnDoubleClick -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleShowAllExtensions -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" AppleShowScrollBars -string "Always" 
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSAutomaticSpellingCorrectionEnabled -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSAutomaticWindowAnimationsEnabled -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSDocumentSaveNewDocumentsToCloud -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSNavPanelExpandedStateForSaveMode -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" NSQuitAlwaysKeepsWindows -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" PMPrintingExpandedStateForPrint -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" com.apple.swipescrolldirection -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/.GlobalPreferences" com.apple.keyboard.fnState -bool YES
   
-  #+ OK, so this is really ugly but the only way to do it if you want to avoid supplying payloads items. I will work on making it nicer when I have time.
-  sudo /bin/cat > "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.sidebarlists.plist" << EOPROFILE
+  # OK, so this is really ugly but the only way to do it if you want to avoid supplying payloads items. I will work on making it nicer when I have time.
+  sudo /bin/cat > "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.sidebarlists.plist" << EOPROFILE
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -534,50 +521,50 @@ EOPROFILE
 # End the ugliness
 
 
-  #+ Third Party
+  # Third Party
   
-  #+ com.adobe.crashreporter
+  # com.adobe.crashreporter
   sudo /usr/bin/defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.crashreporter" always_never_send -int 2
-  #+ com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :10 dict" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral dict" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup array" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup:0 integer 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :10:AVGeneral:CheckForUpdatesAtStartup:0 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup:1 bool NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :10:AVGeneral:CheckForUpdatesAtStartup:1 NO" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
-  #+ Adobe Lightroom
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Lightroom2" noAutomaticallyCheckUpdates -bool true
-  #+ CyberDuck
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" connection.login.useKeychain -string false
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" donate.reminder -string 4.2.1
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" donate.reminder.date -string 1333064699726
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" SUCheckAtStartup -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" update.check -string FALSE
-  #+ Flip4Mac
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/net.telestream.wmv" UpdateCheck_CheckInterval -int 9999
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/net.telestream.wmv.plugin" ShowController -bool YES
-  #+ Growl
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlDisplayPluginName -string "Music Video"
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlEnabled -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlEnableForward -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlLoggingEnabled -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlMenuExtra -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlStartServer -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlUpdateCheck -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" StickyWhenAway -bool NO
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" com.Growl.MusicVideo -dict
-  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo dict" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo:Duration integer 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :com.Growl.MusicVideo:Duration 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
-  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo:Opacity integer 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
-  sudo /usr/libexec/PlistBuddy -c "Set :com.Growl.MusicVideo:Opacity 0" ${TARGET_DIR}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
-  #+ Microsoft Office
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.microsoft.autoupdate2" HowToCheck -string Manual
-  #+ Stuffit Expander
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" moveToApplicationsFolderAlertSuppress -bool YES
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" registrationAction -int 2
-  sudo /usr/bin/defaults write "${TARGET_DIR}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" SUEnableAutomaticChecks -bool NO
+  # com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :10 dict" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral dict" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup array" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup:0 integer 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :10:AVGeneral:CheckForUpdatesAtStartup:0 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :10:AVGeneral:CheckForUpdatesAtStartup:1 bool NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :10:AVGeneral:CheckForUpdatesAtStartup:1 NO" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Acrobat.Pro.plist
+  # Adobe Lightroom
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.adobe.Lightroom2" noAutomaticallyCheckUpdates -bool true
+  # CyberDuck
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" connection.login.useKeychain -string false
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" donate.reminder -string 4.2.1
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" donate.reminder.date -string 1333064699726
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" SUCheckAtStartup -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ch.sudo.cyberduck" update.check -string FALSE
+  # Flip4Mac
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/net.telestream.wmv" UpdateCheck_CheckInterval -int 9999
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/net.telestream.wmv.plugin" ShowController -bool YES
+  # Growl
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlDisplayPluginName -string "Music Video"
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlEnabled -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlEnableForward -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlLoggingEnabled -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlMenuExtra -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlStartServer -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" GrowlUpdateCheck -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" StickyWhenAway -bool NO
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp" com.Growl.MusicVideo -dict
+  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo dict" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo:Duration integer 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :com.Growl.MusicVideo:Duration 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
+  sudo /usr/libexec/PlistBuddy -c "Add :com.Growl.MusicVideo:Opacity integer 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
+  sudo /usr/libexec/PlistBuddy -c "Set :com.Growl.MusicVideo:Opacity 0" ${ROOT}/System/Library/User\ Template/${USER_TEMPLATE}/Library/Preferences/com.Growl.GrowlHelperApp.plist
+  # Microsoft Office
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.microsoft.autoupdate2" HowToCheck -string Manual
+  # Stuffit Expander
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" moveToApplicationsFolderAlertSuppress -bool YES
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" registrationAction -int 2
+  sudo /usr/bin/defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.stuffit.StuffIt-Expander" SUEnableAutomaticChecks -bool NO
  fi
 done
 

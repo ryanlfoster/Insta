@@ -13,8 +13,8 @@ for PKG_POSTFLIGHT in `/usr/bin/find -L ${WORKING_DIR} -name "*.sh" | /usr/bin/g
 do
  ROOT=$(/usr/bin/dirname "${PKG_POSTFLIGHT}")
  IDENTIFIER=$(/usr/bin/basename "${PKG_POSTFLIGHT}" | sed 's/.sh//g')
- DESCRIPTION=$(cat "${PKG_POSTFLIGHT}" | grep "Description:" | sed "s/#+ Description: //g")
- VERSION=$(cat "${PKG_POSTFLIGHT}" | grep "Version:" | sed 's/#+ Version: //g')
+ DESCRIPTION="${IDENTIFIER}"
+ VERSION="1"
  
  /bin/echo "${0} Root: ${ROOT}"
  /bin/echo "${0} Identifier: ${IDENTIFIER}"
