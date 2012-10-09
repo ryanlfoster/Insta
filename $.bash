@@ -59,6 +59,4 @@ do
 
 done
 
- #~/InstaDMG/Addons/InstaUp2Date/checksum.py ${OUTPUT_DIR}/INSTA_OUTPUT/*
-
 exit 0

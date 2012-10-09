@@ -2,8 +2,6 @@
 # AppleGatekeeper : Payload free. Disable Gatekeeper.
 # chris.gerke@gmail.com
 
-ME=$0
-RES="$1/Contents/Resources"
 ROOT="$3"
 DAEMON="AppleGateKeeper"
 

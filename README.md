@@ -3,7 +3,7 @@ Insta
 
 My InstaDMG AddOns. Trying to build images on the basis of "RUNONCE". Then use my software management system for frequent changes. Reduces admin etc.
 
-Run _BUILD.bash to automate the package builds.
+Run $.bash to automate the package builds.
 
 NOTES : 
 

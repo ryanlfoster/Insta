@@ -7,7 +7,6 @@ ROOT="$3"
 # // fix
 if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
-# Disable javadisabler LaunchAgent
 JAVAAGENT="${ROOT}/System/Library/LaunchAgents/com.apple.javadisabler"
 [ -e "${JAVAAGENT}.plist" ] && sudo defaults write "${JAVAAGENT}" "RunAtLoad" "No"; sudo chown root:wheel "${JAVAAGENT}.plist"; sudo chmod 644 "${JAVAAGENT}.plist"
 
