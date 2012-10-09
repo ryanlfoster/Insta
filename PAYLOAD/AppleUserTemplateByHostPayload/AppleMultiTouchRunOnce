@@ -1,0 +1,36 @@
+#!/bin/sh
+# AppleMultiTouch : Set trackpad click.
+# chris.gerke@gmail.com
+
+ROOT="$3"
+
+# // fix
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+/usr/bin/defaults -currentHost write "${HOME}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+/bin/rm -Rf "${HOME}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
+
+for USER_TEMPLATE in `sudo /bin/ls "/System/Library/User Template"`
+do
+ if [ -r "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences" ]; then
+  sudo /bin/mkdir -p "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost"
+  sudo /usr/bin/defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+ fi
+done
+
+for USER_DIR in `sudo /bin/ls "/Users"`
+do
+ if [ -r "/Users/${USER_DIR}/Library/Preferences" ]; then
+  sudo /bin/mkdir -p "/Users/${USER_DIR}/Library/Preferences/ByHost"
+  sudo /usr/bin/defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+  sudo /bin/rm -Rf "/Users/${USER_DIR}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
+  sudo /usr/sbin/chown -R "${USER_DIR}" "/Users/${USER_DIR}/Library/Preferences"
+ fi
+done
+
+# Unload
+if [ -r "/Library/LaunchDaemons/AppleMultiTouchRunOnce.plist" ]; then
+ sudo /usr/bin/srm "/Library/LaunchDaemons/AppleMultiTouchRunOnce.plist"
+fi
+
+exit 0
