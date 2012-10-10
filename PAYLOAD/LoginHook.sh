@@ -10,7 +10,7 @@ ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 # Detect payload copy, set loginhook
 if [ -r "${LOGINHOOK}" ]; then
  # Payload
- sudo cp -Rf "${RES}/PAYLOAD/" "${ROOT}/Library/Scripts"
+ sudo cp -Rf "$1/Contents/Resources/PAYLOAD/" "${ROOT}/Library/Scripts"
  sudo chmod -R 755 "${ROOT}/Library/Scripts/LoginHook.sh"
  sudo chown -R root:wheel "${ROOT}/Library/Scripts/LoginHook.bash"
  sudo chmod -R 755 "${ROOT}/Library/Scripts/LoginHook"
