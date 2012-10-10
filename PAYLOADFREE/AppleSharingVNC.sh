@@ -1,14 +1,14 @@
 #!/bin/sh
-# AppleSharing : Payload required. VNC Password.
+# AppleSharing : Payload free. VNC Password.
 # chris.gerke@gmail.com
 
-CONFIG=$(sudo defaults read "$1/Contents/Resources/config" VNCP)
+PASSWORD=""
 
 # // fix
 ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
 # VNC Password
-sudo echo "${CONFIG}" > "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"
+sudo echo "${PASSWORD}" > "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"
 
 # VNC Permissions
 sudo chown -R root:wheel "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"

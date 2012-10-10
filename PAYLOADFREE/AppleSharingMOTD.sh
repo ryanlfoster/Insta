@@ -1,8 +1,8 @@
 #!/bin/sh
-# AppleSharing : Payload required. MOTD banner.
+# AppleSharing : Payload free. MOTD banner.
 # chris.gerke@gmail.com
 
-CONFIG=$(sudo defaults read "$1/Contents/Resources/config" MOTD)
+CONFIG="Unauthorized access to these resources is prohibited."
 
 # // fix
 ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
