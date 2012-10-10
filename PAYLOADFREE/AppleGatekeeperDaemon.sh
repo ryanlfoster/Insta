@@ -2,11 +2,10 @@
 # AppleGatekeeper : Payload free. Disable Gatekeeper.
 # chris.gerke@gmail.com
 
-ROOT="$3"
 DAEMON="AppleGateKeeper"
 
 # // fix
-if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
 # LaunchDaemon (daemon because softwareupdate requires root)
 sudo defaults write "${ROOT}/Library/LaunchDaemons/${DAEMON}" Label "com.cmg.${DAEMON}"

@@ -2,12 +2,12 @@
 # AppleJava : Payload free. Stop disabling Java applet plugin and web start apps.
 # chris.gerke@gmail.com
 
-ROOT="$3"
+AGENT="com.apple.javadisabler"
 
 # // fix
-if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
-JAVAAGENT="${ROOT}/System/Library/LaunchAgents/com.apple.javadisabler"
-[ -e "${JAVAAGENT}.plist" ] && sudo defaults write "${JAVAAGENT}" "RunAtLoad" "No"; sudo chown root:wheel "${JAVAAGENT}.plist"; sudo chmod 644 "${JAVAAGENT}.plist"
+# Disable
+[ -e "${ROOT}/System/Library/LaunchAgents/${AGENT}.plist" ] && sudo defaults write "${ROOT}/System/Library/LaunchAgents/${AGENT}" "RunAtLoad" "No"; sudo chown root:wheel "${ROOT}/System/Library/LaunchAgents/${AGENT}.plist"; sudo chmod 644 "${AGENT}.plist"
 
 exit 0

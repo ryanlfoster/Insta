@@ -2,12 +2,12 @@
 # AppleDockfixup : Payload free. Disable dockfixup.
 # chris.gerke@gmail.com
 
-ROOT="$3"
+PLIST="com.apple.dockfixup.plist"
 
 # // fix
-if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 
-DOCKFIXUP="${ROOT}/Library/Preferences/com.apple.dockfixup.plist"
-[ -e "${DOCKFIXUP}" ] && sudo mv "${DOCKFIXUP}" "${DOCKFIXUP}.bak"
+# Disable
+[ -e "${ROOT}/Library/Preferences/${PLIST}" ] && sudo mv "${ROOT}/Library/Preferences/${PLIST}" "${ROOT}/Library/Preferences/${PLIST}.bak"
 
 exit 0

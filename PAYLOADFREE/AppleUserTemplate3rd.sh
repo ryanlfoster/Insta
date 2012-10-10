@@ -2,11 +2,10 @@
 # AppleUserTemplate : Payload required. Default Apple User Template preferences.
 # chris.gerke@gmail.com
 
-ROOT="$3"
-HOMEPAGE="http://intranet.rdigest.com"
-
 # // fix
-if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+# Multi OS
 TARGET_OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
 
 # User Template
