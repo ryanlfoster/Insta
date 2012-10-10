@@ -1,0 +1,24 @@
+#!/bin/bash
+# AppleProfiles : Payload required. Profiles.
+# chris.gerke@gmail.com
+
+PROFILE="WiFi"
+DAEMON="AppleProfiles${PROFILE}"
+
+# Add for laptops
+/usr/sbin/system_profiler SPHardwareDataType | /usr/bin/grep "Model Identifier" | /usr/bin/grep "Book"
+if [ "$?" = "0" ]; then
+ [ -e "/usr/local/bin/${PROFILE}.mobileconfig.remove" ] && sudo /usr/bin/profiles -I -F "/usr/local/bin/${PROFILE}.mobileconfig.remove"
+ [ -e "/usr/local/bin/${PROFILE}.mobileconfig" ] && sudo /usr/bin/profiles -I -F "/usr/local/bin/${PROFILE}.mobileconfig"
+fi
+
+# Clean
+[ -e "/usr/local/bin/${PROFILE}.mobileconfig" ] && sudo /bin/rm -Rf "/usr/local/bin/${PROFILE}.mobileconfig"
+
+# Unload
+[ -e "/Library/LaunchDaemons/${DAEMON}.plist" ] && sudo /usr/bin/srm "/Library/LaunchDaemons/${DAEMON}.plist"
+
+# Self destruct
+sudo /usr/bin/srm "${0}"
+
+exit 0
