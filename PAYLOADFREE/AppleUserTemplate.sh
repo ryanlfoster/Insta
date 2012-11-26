@@ -27,6 +27,7 @@ do
   #sudo defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.trackpad" Clicking -bool YES
   # com.apple.ATS.plist
   sudo defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.ATS" ATSAutoActivation -string ATSAutoActivationDisable
+  sudo defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.ATS" ATSProtectRequiredSystemFontsSetting -string NO
   # com.apple.Console.plist
   sudo defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" ApplePersistenceIgnoreState YES
   sudo defaults write "${ROOT}/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.Console" NSQuitAlwaysKeepsWindows -int 0
