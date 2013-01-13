@@ -1,0 +1,16 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+# Disable Apple Setup Wizard
+sudo touch "${ROOT}/private/var/db/.AppleSetupDone"
+sudo chown root:wheel "${ROOT}/private/var/db/.AppleSetupDone"
+
+# Disable Registration Wizard
+sudo touch "${ROOT}/Library/Receipts/.SetupRegComplete"
+sudo chown root:wheel "${ROOT}/Library/Receipts/.SetupRegComplete"
+
+exit 0
