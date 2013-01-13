@@ -10,9 +10,9 @@ DAEMON="AppleProfiles${PROFILE}"
 ORG="cmg"
 
 # LaunchDaemon
-sudo defaults write "${ROOT}/Library/LaunchDaemons/${DAEMON}" Label "com.${ORG}.${DAEMON}"
-sudo defaults write "${ROOT}/Library/LaunchDaemons/${DAEMON}" RunAtLoad -bool TRUE
-sudo defaults write "${ROOT}/Library/LaunchDaemons/${DAEMON}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${DAEMON}"
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" Label "com.${ORG}.${DAEMON}"
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" RunAtLoad -bool TRUE
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${DAEMON}"
 
 # Permissions
 [ -e "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist"
