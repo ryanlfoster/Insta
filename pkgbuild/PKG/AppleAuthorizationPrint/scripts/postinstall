@@ -1,0 +1,33 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+FDATE=$(date +"%Y%m%d%H%M%S")
+
+# Detect Plistbuddy, it rocks.
+[ -e /usr/libexec/PlistBuddy ] && PB="/usr/libexec/PlistBuddy" || exit 1
+
+# Backup Original
+[ -e "${ROOT}/etc/authorization" ] && sudo cp -f "${ROOT}/etc/authorization" "${ROOT}/etc/authorization.${FDATE}" || exit 1
+
+# Change ${ROOT}/etc/authorization to allow all users to open preference panes
+sudo "${PB}" -c "set rights:system.preferences.printing:class allow" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.preferences.printing:shared" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.preferences.printing:group" "${ROOT}/etc/authorization"
+
+# Allow print admin rights
+sudo "${PB}" -c "set rights:system.print.admin:class allow" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.print.admin:group" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.print.admin:shared" "${ROOT}/etc/authorization"
+
+# Allow printing manager rights
+sudo "${PB}" -c "set rights:system.printingmanager:class allow" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.printingmanager:rule" "${ROOT}/etc/authorization"
+
+# Permissions
+sudo chown root:wheel "${ROOT}/etc/authorization"
+sudo chmod 644 "${ROOT}/etc/authorization"
+
+exit 0

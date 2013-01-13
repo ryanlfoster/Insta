@@ -1,0 +1,24 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+FDATE=$(date +"%Y%m%d%H%M%S")
+
+# Detect Plistbuddy, it rocks.
+[ -e /usr/libexec/PlistBuddy ] && PB="/usr/libexec/PlistBuddy" || exit 1
+
+# Backup Original
+[ -e "${ROOT}/etc/authorization" ] && sudo cp -f "${ROOT}/etc/authorization" "${ROOT}/etc/authorization.${FDATE}" || exit 1
+
+# Allow network preference pane access
+sudo "${PB}" -c "set rights:system.preferences.network:class allow" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.preferences.network:shared" "${ROOT}/etc/authorization"
+sudo "${PB}" -c "delete rights:system.preferences.network:group" "${ROOT}/etc/authorization"
+
+# Permissions
+sudo chown root:wheel "${ROOT}/etc/authorization"
+sudo chmod 644 "${ROOT}/etc/authorization"
+
+exit 0
