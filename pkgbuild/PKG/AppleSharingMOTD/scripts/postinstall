@@ -1,0 +1,14 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+BANNER="Unauthorized access to these resources is prohibited."
+
+sudo echo " " > "${ROOT}/etc/motd"
+sudo echo "${BANNER}" >> "${ROOT}/etc/motd"
+sudo echo " " >> "${ROOT}/etc/motd"
+
+exit 0
