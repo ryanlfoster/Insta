@@ -1,0 +1,31 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+LCT="MultiTouch"
+ORG="cmg"
+
+defaults -currentHost write "${HOME}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+rm -Rf "${HOME}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
+
+for USER_TEMPLATE in `sudo /bin/ls "/System/Library/User Template"`
+do
+ if [ -r "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences" ]; then
+  sudo mkdir -p "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost"
+  sudo defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+ fi
+done
+
+for USER_DIR in `sudo ls "/Users"`
+do
+ if [ -r "/Users/${USER_DIR}/Library/Preferences" ]; then
+  sudo mkdir -p "/Users/${USER_DIR}/Library/Preferences/ByHost"
+  sudo defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
+  sudo rm -Rf "/Users/${USER_DIR}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
+  sudo chown -R "${USER_DIR}" "/Users/${USER_DIR}/Library/Preferences"
+ fi
+done
+
+# Unload
+[ -e "/usr/local/bin/MultiTouch" ] && sudo srm "/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+
+exit 0

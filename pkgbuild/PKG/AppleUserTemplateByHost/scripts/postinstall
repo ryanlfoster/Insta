@@ -1,0 +1,46 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+LCT="MenuExtras"
+ORG="cmg"
+
+# MenuExtras LaunchDaemon
+[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" Label "com.${ORG}.${LCT}"
+[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/MenuExtras"
+# Permissions
+[ -e "/usr/local/bin/MenuExtras" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/MenuExtras" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist" 
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"; fi
+
+LCT="MultiTouch"
+
+# MultiTouch LaunchDaemon
+[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" Label "com.${ORG}.${LCT}"
+[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/MultiTouch"
+# Permissions
+[ -e "/usr/local/bin/MultiTouch" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/MultiTouch" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist" 
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"; fi
+
+LCT="ScreenSaver"
+
+# ScreenSaver LaunchDaemon
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" Label "com.${ORG}.${LCT}"
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/ScreenSaver"
+# Permissions
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist" 
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"; fi
+
+
+exit 0

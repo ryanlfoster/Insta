@@ -1,0 +1,106 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+LCT="MenuExtras"
+ORG="cmg"
+
+# com.apple.systemuiserver.plist
+defaults delete "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/Applications/Utilities/Keychain Access.app/Contents/Resources/Keychain.menu"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Bluetooth.menu"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/TextInput.menu"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Volume.menu"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Displays.menu"
+defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/RemoteDesktop.menu"
+
+# com.apple.systemuiserver.${UUID}.plist
+defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/TimeMachine.menu"
+# Laptop?
+ioreg -rd1 -c IOPlatformExpertDevice | grep -E model | awk '{print $3}' | sed s/\<\"// | sed s/\"\>// | grep "Book"
+if [ "$?" == "1" ]; then
+ # com.apple.systemuiserver.${UUID}.plist for non-laptop
+ defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+ defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+ defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+else
+ # com.apple.systemuiserver.plist for laptop
+ defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+ defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver""menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+ defaults write "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+fi
+
+# Lockfile
+rm -Rf "${HOME}/Library/Preferences/com.apple.systemuiserver.plist.lockfile"
+rm -Rf "${HOME}/Library/Preferences/ByHost/com.apple.systemuiserver.*.plist.lockfile"
+
+# Apple User Template, booted volume only
+for USER_TEMPLATE in `sudo /bin/ls "/System/Library/User Template"`
+do
+ if [ -r "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences" ]; then
+  sudo mkdir -p "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost"
+  # com.apple.systemuiserver.plist
+  sudo defaults delete "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/Applications/Utilities/Keychain Access.app/Contents/Resources/Keychain.menu"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Bluetooth.menu"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/TextInput.menu"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Volume.menu"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Displays.menu"
+  sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/RemoteDesktop.menu"
+  # com.apple.systemuiserver.${UUID}.plist
+  sudo defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/TimeMachine.menu"
+  # Laptop?
+  ioreg -rd1 -c IOPlatformExpertDevice | grep -E model | awk '{print $3}' | sed s/\<\"// | sed s/\"\>// | grep "Book"
+  if [ "$?" == "1" ]; then
+   # com.apple.systemuiserver.${UUID}.plist for non-laptop
+   sudo defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+   sudo defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+   sudo defaults -currentHost write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+  else
+   # com.apple.systemuiserver.plist for laptop
+   sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+   sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+   sudo defaults write "/System/Library/User Template/${USER_TEMPLATE}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+  fi
+ fi
+done
+
+# Existing users booted volume only
+for USER_DIR in `sudo /bin/ls "/Users"`
+do
+ if [ -r "/Users/${USER_DIR}/Library/Preferences" ]; then
+  sudo mkdir -p "/Users/${USER_DIR}/Library/Preferences/ByHost"
+  # com.apple.systemuiserver.plist
+  sudo defaults delete "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/Applications/Utilities/Keychain Access.app/Contents/Resources/Keychain.menu"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Bluetooth.menu"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/TextInput.menu"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Volume.menu"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Displays.menu"
+  sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/RemoteDesktop.menu"
+  # com.apple.systemuiserver.${UUID}.plist
+  sudo defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/TimeMachine.menu"
+  # Laptop?
+  ioreg -rd1 -c IOPlatformExpertDevice | grep -E model | awk '{print $3}' | sed s/\<\"// | sed s/\"\>// | grep "Book"
+  if [ "$?" == "1" ]; then
+   # com.apple.systemuiserver.${UUID}.plist for non-laptop
+   sudo defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+   sudo defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+   sudo defaults -currentHost write "/Users/${USER_DIR}/Library/Preferences/ByHost/com.apple.systemuiserver" "dontAutoLoad" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+  else
+   # com.apple.systemuiserver.plist for laptop
+   sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/AirPort.menu"
+   sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/VPN.menu"
+   sudo defaults write "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver" "menuExtras" -array-add -string "/System/Library/CoreServices/Menu Extras/Battery.menu"
+  fi
+  # Lockfile
+  sudo rm -Rf "/Users/${USER_DIR}/Library/Preferences/com.apple.systemuiserver.plist.lockfile"
+  sudo rm -Rf "/Users/${USER_DIR}/Library/Preferences/ByHost/com.apple.systemuiserver.*.plist.lockfile"
+  # Permissions
+  sudo chown -R "${USER_DIR}" "/Users/${USER_DIR}/Library/Preferences"
+ fi
+done
+
+# Unload
+[ -e "/usr/local/bin/MenuExtras" ] && sudo srm "/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+
+exit 0
