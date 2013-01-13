@@ -1,0 +1,15 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+PASSWORD="YOURPASSWORDSTRING"
+
+# VNC Password
+sudo echo "${PASSWORD}" > "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"
+sudo chown -R root:wheel "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"
+sudo chmod -R 600 "${ROOT}/Library/Preferences/com.apple.VNCSettings.txt"
+
+exit 0
