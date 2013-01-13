@@ -1,0 +1,10 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+[ -e "${ROOT}/Library/Preferences/com.apple.dockfixup.plist" ] && sudo mv "${ROOT}/Library/Preferences/com.apple.dockfixup.plist" "${ROOT}/Library/Preferences/com.apple.dockfixup.plist.bak"
+
+exit 0
