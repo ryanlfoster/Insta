@@ -1,0 +1,24 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+PROFILE="WiFi"
+DAEMON="AppleProfiles${PROFILE}"
+ORG="cmg"
+
+# LaunchDaemon
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" Label "com.${ORG}.${DAEMON}"
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" RunAtLoad -bool TRUE
+sudo defaults write "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${DAEMON}"
+
+# Permissions
+[ -e "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist"
+[ -e "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist"
+
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/com.${ORG}.${DAEMON}.plist"; fi
+
+exit 0
