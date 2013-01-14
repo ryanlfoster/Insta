@@ -1,0 +1,37 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+LCT="AppleSharing"
+ORG="cmg"
+
+[ -e "${ROOT}/usr/local/bin/ard" ] && sudo chown root:wheel "${ROOT}/usr/local/bin/ard"
+[ -e "${ROOT}/usr/local/bin/ard" ] && sudo chmod 755 "${ROOT}/usr/local/bin/ard"
+[ -e "${ROOT}/usr/local/bin/ard" ] && sudo chmod u+s "${ROOT}/usr/local/bin/ard"
+
+[ -e "${ROOT}/usr/local/bin/ardon" ] && sudo chown root:wheel "${ROOT}/usr/local/bin/ardon"
+[ -e "${ROOT}/usr/local/bin/ardon" ] && sudo chmod 755 "${ROOT}/usr/local/bin/ardon"
+[ -e "${ROOT}/usr/local/bin/ardon" ] && sudo chmod u+s "${ROOT}/usr/local/bin/ardon"
+
+[ -e "${ROOT}/usr/local/bin/ardoff" ] && sudo chown root:wheel "${ROOT}/usr/local/bin/ardoff"
+[ -e "${ROOT}/usr/local/bin/ardoff" ] && sudo chmod 755 "${ROOT}/usr/local/bin/ardoff"
+[ -e "${ROOT}/usr/local/bin/ardoff" ] && sudo chmod u+s "${ROOT}/usr/local/bin/ardoff"
+
+[ -e "${ROOT}/usr/local/bin/sshon" ] && sudo chown root:wheel "${ROOT}/usr/local/bin/sshon"
+[ -e "${ROOT}/usr/local/bin/sshon" ] && sudo chmod 755 "${ROOT}/usr/local/bin/sshon"
+[ -e "${ROOT}/usr/local/bin/sshon" ] && sudo chmod u+s "${ROOT}/usr/local/bin/sshon"
+
+# LaunchAgent
+sudo defaults write "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}" Label "com.${ORG}.${LCT}"
+sudo defaults write "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}" RunAtLoad -bool TRUE
+sudo defaults write "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/ard"
+sudo chown root:wheel "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}.plist"
+sudo chmod 644 "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}.plist"
+
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchAgents/com.${ORG}.${LCT}.plist"; fi
+
+exit 0
