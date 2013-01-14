@@ -1,0 +1,15 @@
+#!/bin/bash
+# chris.gerke@gmail.com
+
+ME=$0
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+
+LOGINHOOK="/Library/Scripts/FirstBoot.bash"
+
+sudo defaults write "${ROOT}/var/root/Library/Preferences/com.apple.loginwindow" LoginHook -string "${LOGINHOOK}"
+
+[ -e "${ROOT}/${LOGINHOOK}" ] && sudo chown -R root:wheel "${ROOT}/${LOGINHOOK}"
+[ -e "${ROOT}/${LOGINHOOK}" ] && sudo chmod -R 755 "${ROOT}/${LOGINHOOK}"
+
+exit 0
