@@ -1,6 +1,6 @@
 #!/bin/bash
 # chris.gerke@gmail.com
-# Simple loop to create flat packages for every folder in WORKING_DIR containing scripts.
+# Simple loop to create flat packages for every folder in WORKING_DIR containing scripts. Checks for the existence of payload files.
 
 ORG="cmg"
 WORKING_DIR=$(dirname "${0}")
