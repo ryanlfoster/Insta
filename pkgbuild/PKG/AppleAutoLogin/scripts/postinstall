@@ -1,13 +1,12 @@
 #!/bin/bash
 # chris.gerke@gmail.com
 
-# Specify the shortname, include kcpassword file(s) in your payload.
-
-SHORTNAME="YOURUSER"
-
-ME=$0
-OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
 ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ME=$0
+
+# Specify the shortname, include kcpassword file(s) in your payload.
+SHORTNAME="YOURUSER"
 
 # Payload
 [ -e "${ROOT}/tmp/kcpassword.${MOS}" ] && sudo cp -f "${ROOT}/tmp/kcpassword.${OS}" "${ROOT}/etc/kcpassword" || exit 1

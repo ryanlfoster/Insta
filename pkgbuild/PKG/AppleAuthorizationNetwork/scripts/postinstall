@@ -1,9 +1,10 @@
 #!/bin/bash
 # chris.gerke@gmail.com
 
-ME=$0
-OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
 ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+OS=$(sudo defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ME=$0
+
 FDATE=$(date +"%Y%m%d%H%M%S")
 
 # Detect Plistbuddy, it rocks.
