@@ -1,0 +1,21 @@
+#!/bin/bash
+
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+OS=$(defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ME=$0
+
+LND="AppleLaunchdProfiles"
+
+# LaunchDaemon
+sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
+sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
+sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${LND}"
+
+# Permissions
+[ -e "${ROOT}/Library/LaunchDaemons/${LND}.plist" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
+[ -e "${ROOT}/Library/LaunchDaemons/${LND}.plist" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist"
+
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/${LND}.plist"; fi
+
+exit 0

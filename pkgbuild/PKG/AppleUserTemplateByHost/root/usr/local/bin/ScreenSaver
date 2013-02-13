@@ -1,8 +1,6 @@
 #!/bin/bash
-# chris.gerke@gmail.com
 
-LCT="ScreenSaver"
-ORG="cmg"
+LND="ScreenSaver"
 
 # com.apple.screensaver
 sudo defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.screensaver" CleanExit -string "YES"
@@ -50,6 +48,6 @@ do
 done
 
 # Unload Daemon
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo srm "/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/ScreenSaver" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
 
 exit 0

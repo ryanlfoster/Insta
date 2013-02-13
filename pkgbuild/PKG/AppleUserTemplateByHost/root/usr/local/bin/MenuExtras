@@ -1,8 +1,6 @@
 #!/bin/bash
-# chris.gerke@gmail.com
 
-LCT="MenuExtras"
-ORG="cmg"
+LND="MenuExtras"
 
 # com.apple.systemuiserver.plist
 defaults delete "${HOME}/Library/Preferences/com.apple.systemuiserver" "menuExtras"
@@ -101,6 +99,6 @@ do
 done
 
 # Unload
-[ -e "/usr/local/bin/MenuExtras" ] && sudo srm "/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/MenuExtras" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
 
 exit 0

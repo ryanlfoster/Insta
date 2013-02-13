@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+OS=$(defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ME=$0
+
+LNA="AppleLaunchdUserLibrary"
+
+sudo defaults write "${ROOT}/Library/LaunchAgents/${LNA}" Label "${LNA}"
+sudo defaults write "${ROOT}/Library/LaunchAgents/${LNA}" RunAtLoad -bool TRUE
+sudo defaults write "${ROOT}/Library/LaunchAgents/${LNA}" ProgramArguments -array "/bin/sh" "-c" "/bin/sleep 10; /usr/bin/chflags nohidden ~/Library"
+sudo chown root:wheel "${ROOT}/Library/LaunchAgents/${LNA}.plist"
+sudo chmod 644 "${ROOT}/Library/LaunchAgents/${LNA}.plist"
+
+# Load if booted
+if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchAgents/${LNA}.plist"; fi
+
+exit 0

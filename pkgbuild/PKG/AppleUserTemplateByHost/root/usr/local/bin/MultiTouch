@@ -1,8 +1,6 @@
 #!/bin/bash
-# chris.gerke@gmail.com
 
-LCT="MultiTouch"
-ORG="cmg"
+LND="MultiTouch"
 
 defaults -currentHost write "${HOME}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
 rm -Rf "${HOME}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
@@ -26,6 +24,6 @@ do
 done
 
 # Unload
-[ -e "/usr/local/bin/MultiTouch" ] && sudo srm "/Library/LaunchDaemons/com.${ORG}.${LCT}.plist"
+[ -e "/usr/local/bin/MultiTouch" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
 
 exit 0

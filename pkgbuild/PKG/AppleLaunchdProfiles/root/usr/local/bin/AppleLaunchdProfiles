@@ -1,0 +1,32 @@
+#!/bin/bash
+
+LND="AppleLaunchdProfiles"
+
+# Add for laptops
+system_profiler SPHardwareDataType | grep "Model Identifier" | grep "Book"
+if [ "$?" = "0" ]; then
+
+ for REMOVE in `profiles -L | awk '{print $4}'`
+ do
+  echo "Removing ${REMOVE}"
+  sudo profiles -R -p "${REMOVE}"
+ done
+ 
+ sleep 5
+ 
+ for PROFILE in `ls "/usr/local/bin" | grep ".mobileconfig"`
+ do
+  echo "Adding ${p}"
+  sudo profiles -I -F "/usr/local/bin/${PROFILE}"
+  sudo srm -Rf "/usr/local/bin/${PROFILE}"
+  sleep 1
+ done
+ 
+fi
+
+# Unload
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+
+sudo srm "${0}"
+
+exit 0
