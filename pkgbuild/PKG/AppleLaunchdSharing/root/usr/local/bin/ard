@@ -1,6 +1,6 @@
 #!/bin/bash
+# Configure sharing for end users.
 
-# Configure Remote Management so end users have to accept a connection
 /usr/local/bin/ardoff
 
 exit 0
