@@ -1,0 +1,12 @@
+#!/bin/bash
+
+LND="AppleLaunchdJavadisabler"
+
+[ -e "/System/Library/LaunchAgents/com.apple.javadisabler.plist" ] && sudo /bin/launchctl unload -w /System/Library/LaunchAgents/com.apple.javadisabler.plist
+
+# Cleanup
+#[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+#sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0
