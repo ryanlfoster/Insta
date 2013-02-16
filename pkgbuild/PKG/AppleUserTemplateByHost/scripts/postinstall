@@ -4,39 +4,39 @@ ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
 OS=$(defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
 ME=$0
 
-LND="MenuExtras"
+LND="AppleLaunchdMenuExtras"
 
 # MenuExtras LaunchDaemon
-[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
-[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
-[ -e "/usr/local/bin/MenuExtras" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/MenuExtras"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${LND}"
 # Permissions
-[ -e "/usr/local/bin/MenuExtras" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
-[ -e "/usr/local/bin/MenuExtras" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
+[ -e "/usr/local/bin/${LND}" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
+[ -e "/usr/local/bin/${LND}" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
 # Load if booted
 if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/${LND}.plist"; fi
 
-LND="MultiTouch"
+LND="AppleLaunchdMultiTouch"
 
 # MultiTouch LaunchDaemon
-[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
-[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
-[ -e "/usr/local/bin/MultiTouch" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/MultiTouch"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${LND}"
 # Permissions
-[ -e "/usr/local/bin/MultiTouch" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
-[ -e "/usr/local/bin/MultiTouch" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
+[ -e "/usr/local/bin/${LND}" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
+[ -e "/usr/local/bin/${LND}" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
 # Load if booted
 if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/${LND}.plist"; fi
 
-LND="ScreenSaver"
+LND="AppleLaunchdScreenSaver"
 
 # ScreenSaver LaunchDaemon
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/ScreenSaver"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" Label "${LND}"
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" RunAtLoad -bool TRUE
+[ -e "/usr/local/bin/${LND}" ] && sudo defaults write "${ROOT}/Library/LaunchDaemons/${LND}" ProgramArguments -array "/bin/sh" "-c" "/usr/local/bin/${LND}"
 # Permissions
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
+[ -e "/usr/local/bin/${LND}" ] && sudo chown root:wheel "${ROOT}/Library/LaunchDaemons/${LND}.plist"
+[ -e "/usr/local/bin/${LND}" ] && sudo chmod 644 "${ROOT}/Library/LaunchDaemons/${LND}.plist" 
 # Load if booted
 if [ -z "${ROOT}" ] || [ "${ROOT}" = "" ]; then sudo launchctl load -w "${ROOT}/Library/LaunchDaemons/${LND}.plist"; fi
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LND="MultiTouch"
+LND="AppleLaunchdMultiTouch"
 
 defaults -currentHost write "${HOME}/Library/Preferences/ByHost/.GlobalPreferences" "com.apple.mouse.tapBehavior" -int 1
 rm -Rf "${HOME}/Library/Preferences/ByHost/.GlobalPreferences.*.plist.lockfile"
@@ -23,7 +23,9 @@ do
  fi
 done
 
-# Unload
-[ -e "/usr/local/bin/MultiTouch" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
 
 exit 0

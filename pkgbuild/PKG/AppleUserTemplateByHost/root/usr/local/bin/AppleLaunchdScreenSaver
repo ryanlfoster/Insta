@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LND="ScreenSaver"
+LND="AppleLaunchdScreenSaver"
 
 # com.apple.screensaver
 sudo defaults -currentHost write "${HOME}/Library/Preferences/ByHost/com.apple.screensaver" CleanExit -string "YES"
@@ -47,7 +47,9 @@ do
  fi
 done
 
-# Unload Daemon
-[ -e "/usr/local/bin/ScreenSaver" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
 
 exit 0
