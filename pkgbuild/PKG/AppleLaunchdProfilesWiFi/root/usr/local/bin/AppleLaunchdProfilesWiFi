@@ -1,0 +1,33 @@
+#!/bin/bash
+
+LND="AppleLaunchdProfilesWiFi"
+PRO="com.YOURORG.wifi"
+
+# Disable airport as to stop certain profiles prompting for creds, can hand boot.
+sudo networksetup -setairportpower "en1" "off"
+if [ "$?" != 0 ]; then
+ exit 1
+fi
+
+sudo networksetup -getairportpower "en1" | grep "Off"
+if [ "$?" != 0 ]; then
+ exit 1
+fi
+
+# Add for laptops only?
+system_profiler SPHardwareDataType | grep "Model Identifier" | grep "Book"
+if [ "$?" = "0" ]; then
+ [ -e "/usr/local/bin/WIFI.mobileconfig" ] && sudo profiles -I -F "/usr/local/bin/WIFI.mobileconfig"
+fi
+
+sudo profiles -L | grep "${PRO}"
+if [ "$?" != 0 ]; then
+ exit 1
+fi
+
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0

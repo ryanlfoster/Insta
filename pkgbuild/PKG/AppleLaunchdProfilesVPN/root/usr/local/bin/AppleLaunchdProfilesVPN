@@ -1,0 +1,22 @@
+#!/bin/bash
+
+LND="AppleLaunchdProfilesVPN"
+PRO="com.YOURORG.vpn"
+
+# Add for laptops only?
+system_profiler SPHardwareDataType | grep "Model Identifier" | grep "Book"
+if [ "$?" = "0" ]; then
+ [ -e "/usr/local/bin/VPN.mobileconfig" ] && sudo profiles -I -F "/usr/local/bin/VPN.mobileconfig"
+fi
+
+sudo profiles -L | grep "${PRO}"
+if [ "$?" != 0 ]; then
+ exit 1
+fi
+
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0
