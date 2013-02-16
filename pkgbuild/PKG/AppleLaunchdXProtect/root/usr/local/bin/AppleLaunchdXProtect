@@ -1,0 +1,12 @@
+#!/bin/bash
+
+LND="AppleLaunchdXProtect"
+
+[ -e "/System/Library/LaunchDaemons/com.apple.xprotectupdater.plist" ] && sudo /bin/launchctl unload -w /System/Library/LaunchDaemons/com.apple.xprotectupdater.plist
+
+# Cleanup
+#[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+#sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0
