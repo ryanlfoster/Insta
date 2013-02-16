@@ -1,0 +1,15 @@
+#!/bin/bash
+
+LND="AppleLaunchdInstaFix"
+
+sudo chown root:admin /
+if [ "$?" != "0" ]; then
+ exit 1
+fi
+
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0

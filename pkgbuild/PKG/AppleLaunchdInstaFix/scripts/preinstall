@@ -1,0 +1,7 @@
+#!/bin/bash
+
+ROOT="$3"; if [ -z "${ROOT}" ] || [ "${ROOT}" = "/" ]; then ROOT=""; fi
+OS=$(defaults read "${ROOT}/System/Library/CoreServices/SystemVersion" ProductVersion)
+ME=$0
+
+exit 0
