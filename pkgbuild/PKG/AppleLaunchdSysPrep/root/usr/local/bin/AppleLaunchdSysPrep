@@ -1,0 +1,54 @@
+#!/bin/bash
+
+LND="AppleLaunchdSysPrep"
+
+SERIAL=$(/usr/sbin/ioreg -c IOPlatformExpertDevice | sed -E -n -e '/IOPlatformSerialNumber/{s/^.*[[:space:]]"IOPlatformSerialNumber" = "(.+)"$/\1/p;q;}')
+MACADDRESS=$(/usr/sbin/networksetup -getMACADDRESS en0 | awk '{print $3}' | sed s/://g)
+COMPUTERNAME=$(sudo scutil --get ComputerName)
+LOCALHOSTNAME=$(sudo scutil --get LocalHostName)
+HOSTNAME=$(sudo scutil --get HostName)
+NETBIOS=$(sudo defaults read /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName)
+
+sudo scutil --set ComputerName "${SERIAL}-${MACADDRESS}"
+sudo scutil --set LocalHostName "${SERIAL}-${MACADDRESS}"
+sudo scutil --set HostName "${SERIAL}-${MACADDRESS}"
+sudo hostname "${SERIAL}-${MACADDRESS}"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName "${SERIAL}"
+
+if [ "${COMPUTERNAME}" != "${SERIAL}-${MACADDRESS}" ]; then
+ exit 1
+fi
+
+if [ "${LOCALHOSTNAME}" != "${SERIAL}-${MACADDRESS}" ]; then
+ exit 1
+fi
+
+if [ "${HOSTNAME}" != "${SERIAL}-${MACADDRESS}" ]; then
+ exit 1
+fi
+
+if [ "${NETBIOS}" != "${SERIAL}" ]; then
+ exit 1
+fi
+
+# Random settings I haven't put in dedicated pkgs for.
+
+# Disable ipv6 for AD bind bugs and disable some stuff so users cant use it.
+sudo networksetup -setv6off "Airport"
+sudo networksetup -setv6off "Ethernet"
+sudo networksetup -setv6off "Wi-Fi"
+sudo networksetup -setnetworkserviceenabled "Bluetooth DUN" "off"
+sudo networksetup -setnetworkserviceenabled "Bluetooth PAN" "off"
+sudo networksetup -setnetworkserviceenabled "FireWire" "off"
+
+# Energy saver
+sudo systemsetup -setcomputersleep "60"
+sudo systemsetup -setdisplaysleep "15"
+sudo systemsetup -setharddisksleep off
+
+# Cleanup
+[ -e "/Library/LaunchDaemons/${LND}.plist" ] && sudo srm "/Library/LaunchDaemons/${LND}.plist"
+sudo launchctl remove "${LND}"
+#sudo srm "${0}"
+
+exit 0
